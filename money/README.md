@@ -6,5 +6,7 @@
 1. $5 + 10 CHF = $10 if rate is 2:1
 2. ~~$5 * 2 = $10~~
 3. Make “amount” private
-4. Dollar side effects?
+4. ~~Dollar side effects?~~
 5. Money rounding?
+6. equals?
+7. used as key of map?
