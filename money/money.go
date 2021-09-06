@@ -8,6 +8,7 @@ type Dollar struct {
 	amount int
 }
 
-func (d *Dollar) times(multiplier int) {
+func (d *Dollar) times(multiplier int) Dollar {
 	d.amount *= multiplier
+	return Dollar{}
 }
