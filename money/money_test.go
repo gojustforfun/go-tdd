@@ -1,8 +1,9 @@
-package money
+package money_test
 
 import (
 	"testing"
 
+	. "github.com/gojustforfun/go-tdd/money"
 	"github.com/stretchr/testify/assert"
 )
 
