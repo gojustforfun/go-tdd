@@ -57,6 +57,18 @@ func (s *TemplateTestSuite) Test_Different_Template_Text() {
 	s.assertTemplateEvaluateTo("Hi, Gopher")
 }
 
+func (s *TemplateTestSuite) Test_No_Variable_In_Template_Text() {
+
+	s.template = NewTemplate("Go")
+	s.assertTemplateEvaluateTo("Go")
+
+	s.Run("Set Multiple Variables", func() {
+		s.template.Set("unknown", "java")
+		s.template.Set("seven", "python")
+		s.assertTemplateEvaluateTo("Go")
+	})
+}
+
 func (s *TemplateTestSuite) assertTemplateEvaluateTo(expected string) {
 	s.Equal(expected, s.template.Evaluate())
 }
