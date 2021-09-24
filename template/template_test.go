@@ -26,6 +26,12 @@ func TestTemplate_OneVariable(t *testing.T) {
 			value:   "Go Developer",
 			want:    "Hi, Go Developer",
 		},
+		"ignore unknown variable": {
+			content: "Hi, ${name}",
+			name:    "unknown",
+			value:   "Go Developer",
+			want:    "Hi, ${name}",
+		},
 	}
 	for desc, tt := range testcases {
 		t.Run(desc, func(t *testing.T) {
@@ -41,5 +47,7 @@ func TestTemplate_MultipleVariables(t *testing.T) {
 	template.Set("one", "1")
 	template.Set("two", "2")
 	template.Set("three", "3")
+	template.Set("unknown_four", "4")
+	template.Set("unknown_five", "5")
 	assert.Equal(t, "1, 2, 3", template.Evaluate())
 }
