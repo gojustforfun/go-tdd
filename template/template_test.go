@@ -51,3 +51,23 @@ func TestTemplate_MultipleVariables(t *testing.T) {
 	template.Set("unknown_five", "5")
 	assert.Equal(t, "1, 2, 3", template.Evaluate())
 }
+
+func TestTemplate_MultipleCallOnEvaluate_WithDifferentVariableValue(t *testing.T) {
+	template := NewTemplate("${one}, ${two}, ${three}")
+	template.Set("one", "1")
+	template.Set("two", "2")
+	template.Set("three", "3")
+	template.Set("unknown_four", "4")
+	template.Set("unknown_five", "5")
+	assert.Equal(t, "1, 2, 3", template.Evaluate())
+	assert.Equal(t, "1, 2, 3", template.Evaluate())
+	assert.Equal(t, "1, 2, 3", template.Evaluate())
+	template.Set("one", "3")
+	template.Set("two", "2")
+	template.Set("three", "1")
+	template.Set("unknown_four", "5")
+	template.Set("unknown_five", "4")
+	assert.Equal(t, "3, 2, 1", template.Evaluate())
+	assert.Equal(t, "3, 2, 1", template.Evaluate())
+	assert.Equal(t, "3, 2, 1", template.Evaluate())
+}
