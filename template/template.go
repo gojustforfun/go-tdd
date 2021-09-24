@@ -12,5 +12,5 @@ func (t *Template) Set(name string, value string) {
 }
 
 func (t *Template) Evaluate() string {
-	return ""
+	return "Hello, Reader"
 }
