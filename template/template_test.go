@@ -26,6 +26,12 @@ func TestTemplate_OneVariable(t *testing.T) {
 			value:   "Go Developer",
 			want:    "Hello, Go Developer",
 		},
+		"different content with same variable name and value": {
+			content: "Hi, ${name}",
+			name:    "name",
+			value:   "Go Developer",
+			want:    "Hi, Go Developer",
+		},
 	}
 	for desc, tt := range testcases {
 		t.Run(desc, func(t *testing.T) {
