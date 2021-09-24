@@ -1,6 +1,7 @@
 package template
 
 type Template struct {
+	variableValue string
 }
 
 func NewTemplate(content string) *Template {
@@ -8,9 +9,9 @@ func NewTemplate(content string) *Template {
 }
 
 func (t *Template) Set(name string, value string) {
-
+	t.variableValue = value
 }
 
 func (t *Template) Evaluate() string {
-	return "Hello, Reader"
+	return "Hello, " + t.variableValue
 }
