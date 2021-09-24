@@ -20,13 +20,7 @@ func TestTemplate_OneVariable(t *testing.T) {
 			value:   "Reader",
 			want:    "Hello, Reader",
 		},
-		"same content with different value of same variable name": {
-			content: "Hello, ${name}",
-			name:    "name",
-			value:   "Go Developer",
-			want:    "Hello, Go Developer",
-		},
-		"different content with same variable name and value": {
+		"different content with different value of same variable": {
 			content: "Hi, ${name}",
 			name:    "name",
 			value:   "Go Developer",
