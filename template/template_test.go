@@ -35,3 +35,11 @@ func TestTemplate_OneVariable(t *testing.T) {
 		})
 	}
 }
+
+func TestTemplate_MultipleVariables(t *testing.T) {
+	template := NewTemplate("${one}, ${two}, ${three}")
+	template.Set("one", "1")
+	template.Set("two", "2")
+	template.Set("three", "3")
+	assert.Equal(t, "1, 2, 3", template.Evaluate())
+}
