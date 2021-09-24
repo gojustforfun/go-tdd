@@ -24,17 +24,22 @@ func (t *Template) Set(name string, value string) {
 }
 
 func (t *Template) Evaluate() (string, error) {
-	text := t.text
-	for name, value := range t.variables {
-		text = strings.ReplaceAll(text, "${"+name+"}", value)
-	}
-	if t.hasUnmatchedVariables(text) {
+	text := t.replaceVariables()
+	if t.hasUnreplacedVariables(text) {
 		return "", ErrUnmatchedVariable
 	}
 	return text, nil
 }
 
-func (t *Template) hasUnmatchedVariables(text string) bool {
+func (t *Template) replaceVariables() string {
+	text := t.text
+	for name, value := range t.variables {
+		text = strings.ReplaceAll(text, "${"+name+"}", value)
+	}
+	return text
+}
+
+func (t *Template) hasUnreplacedVariables(text string) bool {
 	matched, _ := regexp.MatchString(`(\$\{(\d|\w)+\})+`, text)
 	return matched
 }
