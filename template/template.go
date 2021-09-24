@@ -1,11 +1,14 @@
 package template
 
+import "strings"
+
 type Template struct {
 	variableValue string
+	content       string
 }
 
 func NewTemplate(content string) *Template {
-	return &Template{}
+	return &Template{content: content}
 }
 
 func (t *Template) Set(name string, value string) {
@@ -13,5 +16,5 @@ func (t *Template) Set(name string, value string) {
 }
 
 func (t *Template) Evaluate() string {
-	return "Hello, " + t.variableValue
+	return strings.ReplaceAll(t.content, "${name}", t.variableValue)
 }
