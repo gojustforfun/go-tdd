@@ -4,70 +4,59 @@ import (
 	"testing"
 
 	. "github.com/gojustforfun/go-tdd/template"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestTemplate_OneVariable(t *testing.T) {
-	testcases := map[string]struct {
-		content string
-		name    string
-		value   string
-		want    string
-	}{
-		"simple": {
-			content: "Hello, ${name}",
-			name:    "name",
-			value:   "Reader",
-			want:    "Hello, Reader",
-		},
-		"different content with different value of same variable": {
-			content: "Hi, ${name}",
-			name:    "name",
-			value:   "Go Developer",
-			want:    "Hi, Go Developer",
-		},
-		"ignore unknown variable": {
-			content: "Hi, ${name}",
-			name:    "unknown",
-			value:   "Go Developer",
-			want:    "Hi, ${name}",
-		},
-	}
-	for desc, tt := range testcases {
-		t.Run(desc, func(t *testing.T) {
-			tr := NewTemplate(tt.content)
-			tr.Set(tt.name, tt.value)
-			assert.Equal(t, tt.want, tr.Evaluate())
-		})
-	}
+func TestTemplateTestSuite(t *testing.T) {
+	suite.Run(t, new(TemplateTestSuite))
 }
 
-func TestTemplate_MultipleVariables(t *testing.T) {
-	template := NewTemplate("${one}, ${two}, ${three}")
-	template.Set("one", "1")
-	template.Set("two", "2")
-	template.Set("three", "3")
-	template.Set("unknown_four", "4")
-	template.Set("unknown_five", "5")
-	assert.Equal(t, "1, 2, 3", template.Evaluate())
+type TemplateTestSuite struct {
+	suite.Suite
+	template *Template
 }
 
-func TestTemplate_MultipleCallOnEvaluate_WithDifferentVariableValue(t *testing.T) {
-	template := NewTemplate("${one}, ${two}, ${three}")
-	template.Set("one", "1")
-	template.Set("two", "2")
-	template.Set("three", "3")
-	template.Set("unknown_four", "4")
-	template.Set("unknown_five", "5")
-	assert.Equal(t, "1, 2, 3", template.Evaluate())
-	assert.Equal(t, "1, 2, 3", template.Evaluate())
-	assert.Equal(t, "1, 2, 3", template.Evaluate())
-	template.Set("one", "3")
-	template.Set("two", "2")
-	template.Set("three", "1")
-	template.Set("unknown_four", "5")
-	template.Set("unknown_five", "4")
-	assert.Equal(t, "3, 2, 1", template.Evaluate())
-	assert.Equal(t, "3, 2, 1", template.Evaluate())
-	assert.Equal(t, "3, 2, 1", template.Evaluate())
+func (s *TemplateTestSuite) SetupTest() {
+	s.template = NewTemplate("${one}, ${two}, ${three}")
+	s.template.Set("one", "1")
+	s.template.Set("two", "2")
+	s.template.Set("three", "3")
+}
+
+func (s *TemplateTestSuite) Test_Multiple_Variables() {
+	s.assertTemplateEvaluateTo("1, 2, 3")
+}
+
+func (s *TemplateTestSuite) Test_Ignore_Unknown_Variables() {
+	s.template.Set("unknown_four", "4")
+	s.template.Set("unknown_five", "5")
+	s.assertTemplateEvaluateTo("1, 2, 3")
+}
+
+func (s *TemplateTestSuite) Test_Multiple_Evaluate_Calls() {
+
+	s.Run("Before Modify Values", func() {
+		s.assertTemplateEvaluateTo("1, 2, 3")
+		s.assertTemplateEvaluateTo("1, 2, 3")
+	})
+
+	s.Run("After Modify Values", func() {
+		s.template.Set("one", "3")
+		s.template.Set("two", "2")
+		s.template.Set("three", "1")
+		s.template.Set("six", "6")
+		s.assertTemplateEvaluateTo("3, 2, 1")
+		s.assertTemplateEvaluateTo("3, 2, 1")
+	})
+
+}
+
+func (s *TemplateTestSuite) Test_Different_Template_Text() {
+	s.template = NewTemplate("Hi, ${name}")
+	s.template.Set("name", "Gopher")
+	s.assertTemplateEvaluateTo("Hi, Gopher")
+}
+
+func (s *TemplateTestSuite) assertTemplateEvaluateTo(expected string) {
+	s.Equal(expected, s.template.Evaluate())
 }
