@@ -69,6 +69,20 @@ func (s *TemplateTestSuite) Test_No_Variable_In_Template_Text() {
 	})
 }
 
+func (s *TemplateTestSuite) Test_Unmatched_Variables_Should_Return_Error() {
+	s.template = NewTemplate("${foo} ${bar}")
+	s.assertTemplateEvaluateReturnError(ErrUnmatchedVariable)
+}
+
 func (s *TemplateTestSuite) assertTemplateEvaluateTo(expected string) {
-	s.Equal(expected, s.template.Evaluate())
+	actual, err := s.template.Evaluate()
+	s.NoError(err)
+	s.Equal(expected, actual)
+}
+
+func (s *TemplateTestSuite) assertTemplateEvaluateReturnError(target error) {
+	actual, err := s.template.Evaluate()
+	s.Zero(actual)
+	s.Error(err)
+	s.ErrorIs(err, target)
 }
