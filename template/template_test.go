@@ -74,6 +74,13 @@ func (s *TemplateTestSuite) Test_Unreplaced_Variables_Should_Return_Error() {
 	s.assertTemplateEvaluateReturnError(ErrUnreplacedVariables)
 }
 
+func (s *TemplateTestSuite) Test_Variables_Get_Processed_Just_Once() {
+	s.template.Set("one", "${one}")
+	s.template.Set("two", "${three}")
+	s.template.Set("three", "${two}")
+	s.assertTemplateEvaluateTo("${one}, ${three}, ${two}")
+}
+
 func (s *TemplateTestSuite) assertTemplateEvaluateTo(expected string) {
 	actual, err := s.template.Evaluate()
 	s.NoError(err)
