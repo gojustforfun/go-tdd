@@ -69,7 +69,7 @@ func (s *TemplateTestSuite) Test_No_Variable_In_Template_Text() {
 	})
 }
 
-func (s *TemplateTestSuite) Test_Unmatched_Variables_Should_Return_Error() {
+func (s *TemplateTestSuite) Test_Unreplaced_Variables_Should_Return_Error() {
 	s.template = NewTemplate("${foo} ${bar}")
 	s.assertTemplateEvaluateReturnError(ErrUnreplacedVariables)
 }
