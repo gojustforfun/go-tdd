@@ -2,12 +2,13 @@ package template
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"strings"
 )
 
 var (
-	ErrUnmatchedVariable = errors.New("unmatched variable")
+	ErrUnreplacedVariables = errors.New("unreplaced variables")
 )
 
 type Template struct {
@@ -25,8 +26,8 @@ func (t *Template) Set(name string, value string) {
 
 func (t *Template) Evaluate() (string, error) {
 	text := t.replaceVariables()
-	if t.hasUnreplacedVariables(text) {
-		return "", ErrUnmatchedVariable
+	if names := t.FindUnreplacedVariables(text); len(names) != 0 {
+		return "", fmt.Errorf("%w no value for %s", ErrUnreplacedVariables, strings.Join(names, " "))
 	}
 	return text, nil
 }
@@ -39,7 +40,7 @@ func (t *Template) replaceVariables() string {
 	return text
 }
 
-func (t *Template) hasUnreplacedVariables(text string) bool {
-	matched, _ := regexp.MatchString(`(\$\{(\d|\w)+\})+`, text)
-	return matched
+// FindUnreplacedVariables return names of unreplaced variable
+func (t *Template) FindUnreplacedVariables(text string) []string {
+	return regexp.MustCompile(`\$\{.+\}`).FindStringSubmatch(text)
 }

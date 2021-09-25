@@ -71,7 +71,7 @@ func (s *TemplateTestSuite) Test_No_Variable_In_Template_Text() {
 
 func (s *TemplateTestSuite) Test_Unmatched_Variables_Should_Return_Error() {
 	s.template = NewTemplate("${foo} ${bar}")
-	s.assertTemplateEvaluateReturnError(ErrUnmatchedVariable)
+	s.assertTemplateEvaluateReturnError(ErrUnreplacedVariables)
 }
 
 func (s *TemplateTestSuite) assertTemplateEvaluateTo(expected string) {
