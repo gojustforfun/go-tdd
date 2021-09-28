@@ -24,23 +24,22 @@ func (t *Template) Set(name string, value string) {
 	t.variables[name] = value
 }
 
-func (t *Template) Evaluate() (string, error) {
-	text := t.replaceVariables()
-	if names := t.FindUnreplacedVariables(text); len(names) != 0 {
-		return "", fmt.Errorf("%w no value for %s", ErrMissingValueForVariable, strings.Join(names, " "))
-	}
-	return text, nil
+func (t *Template) Evaluate() (text string, err error) {
+	defer func() {
+		if r, ok := recover().(string); ok {
+			text, err = "", fmt.Errorf("%w : %s", ErrMissingValueForVariable, r)
+		}
+	}()
+	return t.replaceVariables(), nil
 }
 
 func (t *Template) replaceVariables() string {
-	text := t.text
-	for name, value := range t.variables {
-		text = strings.ReplaceAll(text, "${"+name+"}", value)
-	}
-	return text
-}
-
-// FindUnreplacedVariables return names of unreplaced variable
-func (t *Template) FindUnreplacedVariables(text string) []string {
-	return regexp.MustCompile(`\$\{.+\}`).FindStringSubmatch(text)
+	re := regexp.MustCompile(`\$\{\w+\}`)
+	return re.ReplaceAllStringFunc(t.text, func(variable string) string {
+		name := strings.Trim(variable, "${}")
+		if _, ok := t.variables[name]; !ok {
+			panic(variable)
+		}
+		return t.variables[name]
+	})
 }
