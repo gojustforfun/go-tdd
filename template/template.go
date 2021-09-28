@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	ErrUnreplacedVariables = errors.New("unreplaced variables")
+	ErrMissingValueForVariable = errors.New("missing value for variable")
 )
 
 type Template struct {
@@ -27,7 +27,7 @@ func (t *Template) Set(name string, value string) {
 func (t *Template) Evaluate() (string, error) {
 	text := t.replaceVariables()
 	if names := t.FindUnreplacedVariables(text); len(names) != 0 {
-		return "", fmt.Errorf("%w no value for %s", ErrUnreplacedVariables, strings.Join(names, " "))
+		return "", fmt.Errorf("%w no value for %s", ErrMissingValueForVariable, strings.Join(names, " "))
 	}
 	return text, nil
 }
